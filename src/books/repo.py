@@ -63,13 +63,11 @@ class DummyBookRepo:
                 max_id = 0
             book.id = max_id + 1
             self.__books.append(book)
-            raise ValueError
         else:
             for i, b in enumerate(self.__books):
                 if b.id == book.id:
                     self.__books[i] = book
                     return
-            raise ValueError
 
     def new(self) -> Book:
         book = Book(
