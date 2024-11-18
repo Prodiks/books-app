@@ -28,35 +28,42 @@
             <label for="book_rating">Рейтинг</label><br>
             <input id="book_rating" value={{ book.rating }}><br>
         </form>
+
     </div>
-    <a href="/pages/books" class="back-link">Вернуться к списку книг</a>
+    <div class="book-profile">
+        <form action="/books/upload_image?id={{ book.id }}" method="post" enctype="multipart/form-data">
+            <input class="back-link" type="submit" value="Загрузить картинку">
+            <input type="file" name="file" required>
+        </form>
+    </div>
+    <div>
+        <a href="/pages/books" class="back-link">Вернуться к списку книг</a>
+        <a id="updateBookBtn" class="back-link">Изменить</a>
+    </div>
 
-    <a id="updateBookBtn" class="back-link">Изменить</a>
-</div>
-<script>
-    async function editBook(book) {
-        const response = await fetch("/books/update", {
-            method: "PUT",
-            headers: {"Accept": "application/json", "Content-Type": "application/json"},
-            body: JSON.stringify({
-                id: "{{ book.id }}",
-                name: document.getElementById("book_name").value,
-                author: document.getElementById("book_author").value,
-                rating: document.getElementById("book_rating").value,
-                genres: document.getElementById("book_genres").value,
-            })
-        });
-        if (response.ok === true) {
-            alert("Успешно")
-        } else {
-            alert("Ошибка")
+    <script>
+        async function editBook() {
+            const response = await fetch("/books/update", {
+                method: "PUT",
+                headers: {"Accept": "application/json", "Content-Type": "application/json"},
+                body: JSON.stringify({
+                    id: "{{ book.id }}",
+                    name: document.getElementById("book_name").value,
+                    author: document.getElementById("book_author").value,
+                    rating: document.getElementById("book_rating").value,
+                    genres: document.getElementById("book_genres").value,
+                })
+            });
+            if (response.ok === true) {
+                alert("Успешно")
+            } else {
+                alert("Ошибка")
+            }
         }
-    }
 
-    document.getElementById("updateBookBtn").addEventListener("click", async () => {
-        const name = document.getElementById("book_name").value;
-        await editBook({});
-    });
-</script>
+        document.getElementById("updateBookBtn").addEventListener("click", async () => {
+            await editBook();
+        });
+    </script>
 </body>
 </html>

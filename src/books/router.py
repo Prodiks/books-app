@@ -1,5 +1,9 @@
-from fastapi import APIRouter, Depends, Body
+import shutil
+from pathlib import Path
 
+from fastapi import APIRouter, Depends, Body, UploadFile
+from fastapi.responses import RedirectResponse
+import starlette.status as status
 from src.books.repo import DummyBookRepo
 from src.books.models import Book
 
@@ -21,15 +25,23 @@ def get_new_book() -> Book:
 @router.put("/update")
 def update_book(data=Body()) -> Book:
     book = Book(
-            id=int(data["id"]),
-            name=data["name"],
-            author=data["author"],
-            rating=float(data["rating"]),
-            genres=str(data["genres"]).split(',')
-        )
+        id=int(data["id"]),
+        name=data["name"],
+        author=data["author"],
+        rating=float(data["rating"]),
+        genres=str(data["genres"]).split(',')
+    )
     repo.save(book)
     return book
 
+
+@router.post("/upload_image")
+def upload_image(file: UploadFile, id: int) -> RedirectResponse:
+    with open(f"static/images/{id}.webp", "wb+") as photo_obj:
+        shutil.copyfileobj(file.file, photo_obj)
+    return RedirectResponse(
+        f'/pages/books/{id}',
+        status_code=status.HTTP_302_FOUND)
 
 
 @router.get("/{id}", summary="Получить книгу по id")
