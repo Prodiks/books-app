@@ -1,5 +1,4 @@
 import shutil
-from pathlib import Path
 
 from fastapi import APIRouter, Depends, Body, UploadFile
 from fastapi.responses import RedirectResponse
@@ -46,5 +45,4 @@ def upload_image(file: UploadFile, id: int) -> RedirectResponse:
 
 @router.get("/{id}", summary="Получить книгу по id")
 def get_book_by_id(id: int) -> Book:
-    print(repo.load_all())
     return repo.load(id)

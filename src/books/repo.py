@@ -2,15 +2,27 @@ from operator import attrgetter
 from typing import List
 
 from src.books.models import Book
+from src.reviews.models import Review
 
 books_ = [
     Book(
         id=1,
-        name="name1",
+        name="name11",
         author="author1",
         rating=2,
         genres=["Фантастика", "Фэнтези"],
-        reviews=[],
+        reviews=[
+            Review(
+                id=1,
+                content="Некоторый крутой отзыв",
+                rating=4.5,
+            ),
+            Review(
+                id=2,
+                content="Второй некоторый крутой отзыв",
+                rating=3.5,
+            )
+        ],
     ),
     Book(
         id=2,
@@ -58,7 +70,6 @@ class DummyBookRepo:
                     self.__books[i] = book
                     return
             raise ValueError
-
 
     def new(self) -> Book:
         book = Book(
