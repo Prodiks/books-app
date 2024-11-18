@@ -1,3 +1,4 @@
+from operator import attrgetter
 from typing import List
 
 from src.books.models import Book
@@ -20,7 +21,7 @@ books_ = [
         reviews=[],
     ),
     Book(
-        id=2,
+        id=3,
         name="name3",
         author="author3",
         rating=1,
@@ -43,4 +44,29 @@ class DummyBookRepo:
         return self.__books
 
     def save(self, book: Book) -> None:
-        self.__books.append(book)
+        if not book.id:
+            if self.__books:
+                max_id = max(self.__books, key=lambda book: book.id).id
+            else:
+                max_id = 0
+            book.id = max_id + 1
+            self.__books.append(book)
+            raise ValueError
+        else:
+            for i, b in enumerate(self.__books):
+                if b.id == book.id:
+                    self.__books[i] = book
+                    return
+            raise ValueError
+
+
+    def new(self) -> Book:
+        book = Book(
+            name="",
+            author="",
+            rating=5,
+            genres=[],
+            reviews=[],
+        )
+        self.save(book)
+        return book

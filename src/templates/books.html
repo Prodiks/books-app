@@ -7,21 +7,24 @@
     <link rel="stylesheet" type="text/css" href="/static/style/styles.css">
 </head>
 <body>
-    <h1>Список книг</h1>
-    <div>
-        {% for book in books %}
-        <div class="book-card">
-            <img src="/static/images/{{ book.id }}.webp" alt="Фото книги">
-            <div class="details">
-                <h2>ID: {{ book.id }}</h2>
-                <p>Полное имя: {{ book.first_name }} {{ book.last_name }}</p>
-                <p>Email: {{ book.email }}</p>
-                <p>Специальность: {{ book.major }}</p>
-                <p>Курс: {{ book.course }}</p>
-            </div>
-            <a href="/pages/books/{{ book.id }}">Смотреть всю информацию</a>
+<h1>Список книг</h1>
+<div>
+    {% for book in books %}
+    <div class="book-card">
+        <img src="/static/images/{{ book.id }}.webp" alt="Фото книги">
+        <div class="details">
+            <h2>ID: {{ book.id }}</h2>
+            <p>Полное имя: {{ book.first_name }} {{ book.last_name }}</p>
+            <p>Email: {{ book.email }}</p>
+            <p>Специальность: {{ book.major }}</p>
+            <p>Курс: {{ book.course }}</p>
         </div>
-        {% endfor %}
+        <a href="/pages/books/{{ book.id }}">Смотреть всю информацию</a>
     </div>
+    {% endfor %}
+</div>
+<div class="book-card">
+    <a href="/pages/books/new">Добавить книгу</a>
+</div>
 </body>
 </html>

@@ -3,7 +3,7 @@ from pydantic import BaseModel
 
 
 class Book(BaseModel):
-    id: int
+    id: int | None = None
     name: str
     author: str
     rating: float

@@ -5,21 +5,58 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Информация о книге</title>
     <link rel="stylesheet" type="text/css" href="/static/style/book.css">
+    <style>
+        input {
+            padding: 8px 8px;
+            margin: 4px 2px;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Информация о книге</h1>
-        <div class="book-profile">
-            <img src="/static/images/{{ book.id }}.webp" alt="Фото книги">
-            <div class="book-info">
-                <h2>ID: {{ book.id }}</h2>
-                <p><strong>Название:</strong> {{ book.name }}</p>
-                <p><strong>Автор:</strong> {{ book.author }}</p>
-                <p><strong>Рейтинг:</strong> {{ book.rating }}</p>
-                <p><strong>Жанры:</strong> {{ book.genres|join(', ') }}</p>
-            </div>
-        </div>
-        <a href="/pages/books" class="back-link">Вернуться к списку книг</a>
+<div class="container">
+    <h1>Информация о книге</h1>
+    <div class="book-profile">
+        <img src="/static/images/{{ book.id }}.webp" alt="Фото книги">
+        <form>
+            <h2>ID: {{ book.id }}</h2>
+            <label for="book_name">Название</label><br>
+            <input id="book_name" value={{ book.name }}><br>
+            <label for="book_author">Автор</label><br>
+            <input id="book_author" value={{ book.author }}><br>
+            <label for="book_genres">Жанры</label><br>
+            <input id="book_genres" value={{ book.genres|join(', ') }}><br>
+            <label for="book_rating">Рейтинг</label><br>
+            <input id="book_rating" value={{ book.rating }}><br>
+        </form>
     </div>
+    <a href="/pages/books" class="back-link">Вернуться к списку книг</a>
+
+    <a id="updateBookBtn" class="back-link">Изменить</a>
+</div>
+<script>
+    async function editBook(book) {
+        const response = await fetch("/books/update", {
+            method: "PUT",
+            headers: {"Accept": "application/json", "Content-Type": "application/json"},
+            body: JSON.stringify({
+                id: "{{ book.id }}",
+                name: document.getElementById("book_name").value,
+                author: document.getElementById("book_author").value,
+                rating: document.getElementById("book_rating").value,
+                genres: document.getElementById("book_genres").value,
+            })
+        });
+        if (response.ok === true) {
+            alert("Успешно")
+        } else {
+            alert("Ошибка")
+        }
+    }
+
+    document.getElementById("updateBookBtn").addEventListener("click", async () => {
+        const name = document.getElementById("book_name").value;
+        await editBook({});
+    });
+</script>
 </body>
 </html>
