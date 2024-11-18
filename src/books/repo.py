@@ -79,3 +79,8 @@ class DummyBookRepo:
         )
         self.save(book)
         return book
+
+    def remove(self, id):
+        for i, b in enumerate(self.__books):
+            if b.id == id:
+                del self.__books[i]

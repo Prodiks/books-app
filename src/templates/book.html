@@ -54,31 +54,59 @@
     <div>
         <a href="/pages/books" class="back-link">Вернуться к списку книг</a>
         <a id="updateBookBtn" class="back-link">Изменить</a>
+        <a id="deleteBookBtn" class="delete-link">Удалить</a>
     </div>
 </div>
 <script>
     async function editBook() {
-        const response = await fetch("/books/update", {
-            method: "PUT",
-            headers: {"Accept": "application/json", "Content-Type": "application/json"},
-            body: JSON.stringify({
-                id: "{{ book.id }}",
-                name: document.getElementById("book_name").value,
-                author: document.getElementById("book_author").value,
-                rating: document.getElementById("book_rating").value,
-                genres: document.getElementById("book_genres").value,
-            })
-        });
-        if (response.ok === true) {
-            alert("Успешно")
-        } else {
-            alert("Ошибка")
+        try {
+
+            const response = await fetch("/books", {
+                method: "PUT",
+                headers: {"Accept": "application/json", "Content-Type": "application/json"},
+                body: JSON.stringify({
+                    id: "{{ book.id }}",
+                    name: document.getElementById("book_name").value,
+                    author: document.getElementById("book_author").value,
+                    genres: document.getElementById("book_genres").value,
+                })
+            });
+            if (response.ok === true) {
+                alert("Успешно")
+                window.location.reload();
+            } else {
+                alert("Ошибка")
+            }
+        } catch (err) {
+            alert(err)
         }
     }
+
+    async function deleteBook() {
+        try {
+            const response = await fetch("/books/{{ book.id }}", {
+                method: "DELETE",
+                headers: {"Accept": "application/json", "Content-Type": "application/json"},
+            });
+            if (response.ok === true) {
+                alert("Успешно")
+                window.location.replace("/pages/books");
+            } else {
+                alert("Ошибка")
+            }
+        } catch (err) {
+            alert(err)
+        }
+    }
+
+    document.getElementById("deleteBookBtn").addEventListener("click", async () => {
+        await deleteBook();
+    });
 
     document.getElementById("updateBookBtn").addEventListener("click", async () => {
         await editBook();
     });
+
 </script>
 </body>
 </html>

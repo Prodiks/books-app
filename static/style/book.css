@@ -60,11 +60,29 @@ h1 {
     color: white;
     border-radius: 5px;
     text-decoration: none;
+    cursor: pointer;
     margin-top: 20px;
 }
 
 .back-link:hover {
     background-color: #0056b3;
+}
+
+.delete-link {
+    display: inline-block;
+    padding: 10px 20px;
+    border: none;
+    background-color: #df135a;
+    color: white;
+    border-radius: 5px;
+    text-decoration: none;
+    margin-top: 20px;
+    cursor: pointer;
+
+}
+
+.delete-link:hover {
+    background-color: #ae1515;
 }
 
 .submit-button {

@@ -21,14 +21,15 @@ def get_new_book() -> Book:
     return repo.new()
 
 
-@router.put("/update")
+@router.put("/")
 def update_book(data=Body()) -> Book:
     book = Book(
         id=int(data["id"]),
         name=data["name"],
         author=data["author"],
-        rating=float(data["rating"]),
-        genres=str(data["genres"]).split(',')
+        rating=1.,
+        genres=str(data["genres"]).split(','),
+        reviews=[]
     )
     repo.save(book)
     return book
@@ -46,3 +47,9 @@ def upload_image(file: UploadFile, id: int) -> RedirectResponse:
 @router.get("/{id}", summary="Получить книгу по id")
 def get_book_by_id(id: int) -> Book:
     return repo.load(id)
+
+@router.delete("/{id}")
+def delete_book(id: int) -> Book:
+    b = repo.load(id)
+    repo.remove(id)
+    return b
