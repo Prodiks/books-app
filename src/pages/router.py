@@ -24,3 +24,11 @@ def get_book_html(request: Request, book=Depends(get_book_by_id)):
     return templates.TemplateResponse(name='book.html',
                                       context={'request': request, 'book': book})
 
+@router.get('/register')
+async def get_register_html(request: Request):
+    return templates.TemplateResponse(name='register_form.html', context={'request': request})
+
+
+@router.get('/login')
+async def get_login_html(request: Request):
+    return templates.TemplateResponse(name='login_form.html', context={'request': request})

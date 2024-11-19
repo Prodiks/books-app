@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from src.books.router import router as books_router
 from src.pages.router import router as books_pages
+from src.users.router import router as users_pages
 DATABASE_URL = "sqlite:///./sql_app.db"
 
 
@@ -20,3 +21,4 @@ def home_page():
 
 app.include_router(books_router)
 app.include_router(books_pages)
+app.include_router(users_pages)
