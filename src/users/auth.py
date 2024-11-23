@@ -2,7 +2,7 @@ from passlib.context import CryptContext
 from jose import jwt
 from datetime import datetime, timedelta, timezone
 from src.db import get_auth_data
-from src.users.repo import repo
+from src.users.repo import user_repo
 
 
 def create_access_token(data: dict) -> str:
@@ -26,7 +26,7 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
 
 def authenticate_user(login: str, password: str):
-    user = repo.load_by_login(login)
+    user = user_repo.load_by_login(login)
     if not user or verify_password(plain_password=password, hashed_password=user.password) is False:
         return None
     return user

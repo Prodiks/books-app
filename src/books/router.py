@@ -3,22 +3,20 @@ import shutil
 from fastapi import APIRouter, Depends, Body, UploadFile
 from fastapi.responses import RedirectResponse
 import starlette.status as status
-from src.books.repo import DummyBookRepo
+from src.books.repo import BookRepo, book_repo
 from src.books.models import Book
 
 router = APIRouter(prefix='/books', tags=['Работа с книгами'])
 
-repo = DummyBookRepo()
-
 
 @router.get("/", summary="Получить все книги")
 def get_all_books() -> list[Book]:
-    return repo.load_all()
+    return book_repo.load_all()
 
 
 @router.get("/new")
 def get_new_book() -> Book:
-    return repo.new()
+    return book_repo.new()
 
 
 @router.put("/")
@@ -31,7 +29,7 @@ def update_book(data=Body()) -> Book:
         genres=str(data["genres"]).split(','),
         reviews=[]
     )
-    repo.save(book)
+    book_repo.save(book)
     return book
 
 
@@ -46,10 +44,10 @@ def upload_image(file: UploadFile, id: int) -> RedirectResponse:
 
 @router.get("/{id}", summary="Получить книгу по id")
 def get_book_by_id(id: int) -> Book:
-    return repo.load(id)
+    return book_repo.load(id)
 
 @router.delete("/{id}")
 def delete_book(id: int) -> Book:
-    b = repo.load(id)
-    repo.remove(id)
+    b = book_repo.load(id)
+    book_repo.remove(id)
     return b

@@ -1,86 +1,51 @@
-from operator import attrgetter
 from typing import List
 
+from src.db import BookDB
+from src.books.middleware import conv_book_to_db, conv_book_from_db
 from src.books.models import Book
-from src.reviews.models import Review
-
-books_ = [
-    Book(
-        id=1,
-        name="name11",
-        author="author1",
-        rating=2,
-        genres=["Фантастика", "Фэнтези"],
-        reviews=[
-            Review(
-                id=1,
-                content="Некоторый крутой отзыв",
-                rating=4.5,
-            ),
-            Review(
-                id=2,
-                content="Второй некоторый крутой отзыв",
-                rating=3.5,
-            )
-        ],
-    ),
-    Book(
-        id=2,
-        name="name2",
-        author="author2",
-        rating=1,
-        genres=[],
-        reviews=[],
-    ),
-    Book(
-        id=3,
-        name="name3",
-        author="author3",
-        rating=1,
-        genres=[],
-        reviews=[],
-    ),
-]
+from src.db import RepoContext, repo_context
+from sqlalchemy import Select, and_, or_, select
 
 
-class DummyBookRepo:
-    def __init__(self) -> None:
-        self.__books: List[Book] = books_
+class BookRepo:
+    def __init__(self, context: RepoContext) -> None:
+        self.__context = context
 
-    def load(self, id: int) -> Book:
-        for book in self.__books:
-            if book.id == id:
-                return book
+    def load(self, id_: int) -> Book:
+        with self.__context as session:
+            book = session.execute(
+                select(BookDB).where(BookDB.id == id_)
+            ).scalars().first()
+            return conv_book_from_db(book)
 
     def load_all(self) -> List[Book]:
-        return self.__books
+        with self.__context as session:
+            books = session.execute(
+                select(BookDB)
+            ).scalars().all()
+            return [conv_book_from_db(book) for book in books]
 
     def save(self, book: Book) -> None:
-        if not book.id:
-            if self.__books:
-                max_id = max(self.__books, key=lambda book: book.id).id
-            else:
-                max_id = 0
-            book.id = max_id + 1
-            self.__books.append(book)
-        else:
-            for i, b in enumerate(self.__books):
-                if b.id == book.id:
-                    self.__books[i] = book
-                    return
+        with self.__context as session:
+            db_book = conv_book_to_db(book)
+            db_book = session.merge(db_book)
+            session.add(db_book)
 
     def new(self) -> Book:
-        book = Book(
+        book_model = Book(
+            id=None,
             name="",
             author="",
-            rating=5,
+            rating=5.0,
             genres=[],
             reviews=[],
         )
-        self.save(book)
-        return book
+        self.save(book_model)
+        return book_model
 
-    def remove(self, id):
-        for i, b in enumerate(self.__books):
-            if b.id == id:
-                del self.__books[i]
+    def remove(self, id_):
+        with self.__context as session:
+            session.delete(session.get(BookDB, id_))
+
+book_repo = BookRepo(repo_context())
+

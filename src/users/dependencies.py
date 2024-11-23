@@ -4,8 +4,6 @@ from datetime import datetime, timezone
 from src.db import get_auth_data
 from src.exceptions import TokenExpiredException, NoJwtException, NoUserIdException, ForbiddenException, TokenNoFound
 from src.users.models import User
-# from src.users.db import User
-from src.users.repo import repo
 
 
 def get_token(request: Request):
@@ -31,7 +29,7 @@ def get_current_user(token: str = Depends(get_token)):
     if not user_id:
         raise NoUserIdException
 
-    user = repo.load(int(user_id))
+    user = user_repo.load(int(user_id))
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='User not found')
     return user

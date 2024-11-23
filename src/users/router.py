@@ -1,22 +1,31 @@
 from fastapi import APIRouter, Response, Depends
+
+from src.db import repo_context
 from src.exceptions import UserAlreadyExistsException, IncorrectEmailOrPasswordException
 from src.users.auth import get_password_hash, authenticate_user, create_access_token
 from src.users.dependencies import get_current_user, get_current_admin_user
 from src.users.models import User
-from src.users.repo import repo
+from src.users.repo import UserRepo, user_repo
 from src.users.schemas import SUserRegister, SUserAuth
 
 router = APIRouter(prefix='/auth', tags=['Auth'])
 
-
 @router.post("/register/")
 def register_user(user_data: SUserRegister) -> dict:
-    user = repo.load_by_login(user_data.login)
+    user = user_repo.load_by_login(user_data.login)
     if user:
         raise UserAlreadyExistsException
     user_dict = user_data.dict()
     user_dict['password'] = get_password_hash(user_data.password)
-    repo.save(User(login=user_dict['login'], password=user_dict['password']))
+    user_repo.save(
+        User(
+            id=None,
+            login=user_dict['login'],
+            password=user_dict['password'],
+            reviews=[],
+        )
+    )
+
     return {'message': f'Вы успешно зарегистрированы!'}
 
 
@@ -43,4 +52,4 @@ def get_me(user_data: User = Depends(get_current_user)):
 
 @router.get("/all_users/")
 def get_all_users(user_data: User = Depends(get_current_admin_user)):
-    return repo.load_all()
+    return user_repo.load_all()
