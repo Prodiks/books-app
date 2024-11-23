@@ -25,11 +25,12 @@ class BookRepo:
             ).scalars().all()
             return [conv_book_from_db(book) for book in books]
 
-    def save(self, book: Book) -> None:
+    def save(self, book: Book) -> int | None:
         with self.__context as session:
             db_book = conv_book_to_db(book)
             db_book = session.merge(db_book)
             session.add(db_book)
+        return db_book.id
 
     def new(self) -> Book:
         book_model = Book(
@@ -40,12 +41,13 @@ class BookRepo:
             genres=[],
             reviews=[],
         )
-        self.save(book_model)
+        book_model.id = self.save(book_model)
         return book_model
 
     def remove(self, id_):
         with self.__context as session:
             session.delete(session.get(BookDB, id_))
+
 
 book_repo = BookRepo(repo_context())
 
