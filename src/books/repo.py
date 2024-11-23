@@ -11,19 +11,23 @@ class BookRepo:
     def __init__(self, context: RepoContext) -> None:
         self.__context = context
 
-    def load(self, id_: int) -> Book:
+    def load(self, id_: int) -> Book | None:
         with self.__context as session:
             book = session.execute(
                 select(BookDB).where(BookDB.id == id_)
             ).scalars().first()
-            return conv_book_from_db(book)
+            if book:
+                return conv_book_from_db(book)
+            return None
 
-    def load_all(self) -> List[Book]:
+    def load_all(self) -> List[Book] | None:
         with self.__context as session:
             books = session.execute(
                 select(BookDB)
             ).scalars().all()
-            return [conv_book_from_db(book) for book in books]
+            if books is not None:
+                return [conv_book_from_db(book) for book in books]
+            return None
 
     def save(self, book: Book) -> int | None:
         with self.__context as session:
